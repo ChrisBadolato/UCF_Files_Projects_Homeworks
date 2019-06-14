@@ -1,0 +1,241 @@
+# Christopher Badolato 2/4/2019
+# multiplication with forloops
+# $t0-t3 is our use entered values.
+# $t4 is our loop value
+# results stored in t5-t7
+
+.data
+prompt1: .asciiz "Please enter a value for A, B. C and D in that order \n"
+results1: .asciiz "\nf_ten =  "
+results2: .asciiz "\nf_two =  "
+results3: .asciiz "\ng_ten =  "
+results4: .asciiz "\ng_two =  "
+prompt5: .asciiz "Please enter a value for F and G in that order \n"
+f: .asciiz "\nf_ten = "
+g: .asciiz "\ng_ten = "
+results5: .asciiz "\nh_quotient  = "
+results6: .asciiz "\nh_remainder =  "
+results7: .asciiz "\ni_quotient = "
+results8: .asciiz "\ni_remainder =  "
+results9: .asciiz "\nj_remainder =  "
+
+
+.text #required directives
+
+ 	#ask for user input
+li $v0, 4 #4 is code for strings (look at help button operations)
+la $a0, prompt1 #load Address of string
+syscall
+
+li $t0, 0
+li $t1, 0
+li $t2, 0
+li $t3, 0
+	#Get Value A
+li $v0, 5
+syscall
+move $t0, $v0
+	#Get Value B
+li $v0, 5
+syscall
+move $t1, $v0
+	#Get Value C
+li $v0, 5
+syscall
+move $t2, $v0
+	#Get Value D
+li $v0, 5
+syscall
+move $t3, $v0
+
+		#t4 our iteration
+li $t4, 0	#stores a for our first loop
+move $t5, $t0	#results
+li $t6, 0
+li $t7, 0
+
+	#f =((A x A) + (B x D))
+Loop: bge  $t4, $t0, EXIT   
+add $t6, $t6, $t5
+add $t4, $t4, 1 
+j Loop   
+EXIT:
+	#now our result of (A x A) is stored in t6.
+	#reset our iterator
+li $t4, 0
+	#loop through D
+Loop2: bge  $t4, $t3, EXIT2  
+add $t7, $t7, $t1 
+add $t4, $t4, 1 
+j Loop2   
+EXIT2:
+	#reusing $t5 for this results since we no longer need that register from above
+sub $t5, $t6, $t7
+
+move $s0, $t5
+
+li $v0, 4 
+la $a0, results1 
+syscall
+	#print results in decimal
+li $v0, 1
+move $a0, $s0
+syscall 
+
+li $v0, 4 
+la $a0, results2 
+syscall
+	#print results in Binary
+li $v0, 35
+move $a0, $s0
+syscall 
+
+
+	#g =(A x D + 6 x C)
+li $t4, 0
+li $t5, 0
+li $t6, 0
+li $t7, 0
+
+Loop3: bge  $t4, $t0, EXIT3   
+add $t6, $t6, $t3
+add $t4, $t4, 1 
+j Loop3   
+EXIT3:
+	#now our result of (a x d) is stored in t6.
+	#reset our iterator
+li $t4, 0
+	#loop through c add 6 each iteration
+Loop4: bge  $t4, $t2, EXIT4 
+add $t7, $t7, 6 
+add $t4, $t4, 1 
+j Loop4   
+EXIT4:
+
+	#reusing $t5 for this results since we no longer need that register from above
+add $t5, $t6, $t7
+
+move $s1, $t5
+
+li $v0, 4 
+la $a0, results3 
+syscall
+	#print results in decimal
+li $v0, 1
+move $a0, $s1
+syscall 
+
+li $v0, 4 
+la $a0, results4
+syscall
+	#print results in binary
+li $v0, 35
+move $a0, $s1
+syscall 
+
+
+
+#START OF THE NEXT PROGRAM
+
+li $t0, 0
+li $t1, 0
+li $t2, 0
+li $t3, 0
+li $t4, 0
+li $t5, 0
+li $t6, 0
+li $t7, 0
+
+	#Get Value f
+move $t0, $s0
+	#Get Value g
+move $t1, $s1
+			
+li $s2, 0	#h_quotient
+add $s3, $s3, $t0	#h_remainder we initialize to get into our first loop
+
+	
+Loop5:  blt $s3, $t1, EXIT5
+	sub $s3, $s3, $t1
+	addi $s2, $s2, 1
+	j Loop5
+EXIT5:
+
+	#prints f and g
+li $v0, 4 
+la $a0, f 
+syscall
+
+li $v0, 1
+move $a0, $s0
+syscall 
+
+li $v0, 4 
+la $a0, g
+syscall
+
+li $v0, 1
+move $a0, $s1
+syscall 
+
+	#prints results of h = (f/g)
+li $v0, 4 
+la $a0, results5 
+syscall
+
+li $v0, 1
+move $a0, $s2
+syscall 
+
+li $v0, 4 
+la $a0, results6
+syscall
+
+li $v0, 1
+move $a0, $s3
+syscall 
+	
+li $s4, 0
+add $s5, $s1, $s0 #i_remainder
+
+
+Loop6:  blt $s5, $s2, EXIT6
+	sub $s5, $s5, $s2
+	addi $s4, $s4, 1
+	j Loop6
+EXIT6:
+	#print results of i = f+g/h_quotient
+li $v0, 4 
+la $a0, results7 
+syscall
+
+li $v0, 1
+move $a0, $s4
+syscall 
+
+li $v0, 4 
+la $a0, results8
+syscall
+
+li $v0, 1
+move $a0, $s5
+syscall 
+
+	# get value of (f-g)
+sub $s6, $s0, $s1
+
+Loop7:  blt $s6, $s4, EXIT7
+	sub $s6, $s6, $s4
+	j Loop7
+EXIT7:
+	#print final results
+li $v0, 4 
+la $a0, results9 
+syscall
+
+li $v0, 1
+move $a0, $s6
+syscall
+
+li $v0, 10
+syscall
