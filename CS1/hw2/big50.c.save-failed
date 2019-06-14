@@ -1,0 +1,142 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "big50.h"
+
+
+
+
+Integer50 *parseString(char *str) {
+
+    int i = 0, strLength = 0, over50;
+    Integer50 *ptrP;
+    ptrP = malloc(sizeof(struct Integer50));
+    ptrP->digits = malloc(sizeof(int)*50);
+
+
+if (str != NULL){
+
+    strLength = strlen(str);
+    over50 = strLength - 50;
+
+    while(i < MAX50 ) {
+
+    ptrP->digits[i] = str[strLength-1-i]-'0';
+
+    if(str == NULL){
+        printf("Empty");
+        ptrP->digits[i] = 0;
+    }
+
+    if(strLength > MAX50){
+
+    ptrP->digits[i] = (str[strLength-1-i - over50]-'0');
+
+    }
+
+    if(i > strLength - 1){
+        ptrP->digits[i] = str[strLength-1-i]-'0';
+        ptrP->digits[i] = 0;
+    }
+
+    i++;
+
+    }
+}
+else {
+
+    return NULL;
+
+}
+    return ptrP;
+
+}
+
+Integer50 *big50Destroyer(Integer50 *p) {
+
+ free(p);
+ return NULL;
+
+}
+
+Integer50 *big50Add(Integer50 *p, Integer50 *q){
+
+    Integer50 *ptrP;
+    int i = 0, remainder, addedValue;
+
+    ptrP = malloc(sizeof(struct Integer50));
+    ptrP->digits = malloc(sizeof(int)*50);
+
+    if(p != NULL || q != NULL){
+
+    int carryValue = 0;
+        while(i < MAX50) {
+
+            addedValue = q->digits[i] + p->digits[i] + carryValue;
+
+            if(addedValue > 9) {
+                remainder = addedValue - 10;
+                ptrP->digits[i] = remainder;
+                carryValue = 1;
+            }
+            else{
+                ptrP->digits[i] = addedValue;
+                carryValue = 0;
+            }
+            i++;
+        }
+    }
+
+        else {
+        free(ptrP);
+        return NULL;
+       }
+
+return ptrP;
+
+    }
+
+Integer50 *loadCryptoVariable(char *inputString) {
+
+    FILE * ifp;
+    Integer50 *ptrP;
+    int i = 0;
+    char *textFile, fileNumbers[50];
+
+   // textFile = malloc(sizeof(char)*4);
+
+    ptrP = malloc(sizeof(struct Integer50));
+    ptrP->digits = malloc(sizeof(int)*50);
+
+   // strcpy(textFile, ".txt");
+   // strcat(inputString, *textFile);
+
+    ifp = fopen(inputString, "r");
+
+    if(ifp != NULL){
+
+    fgets(fileNumbers, MAX50, ifp);
+    ptrP = parseString(fileNumbers);
+
+    }
+    else{
+        fclose(ifp);
+        return NULL;
+    }
+
+    fclose(ifp);
+    return ptrP;
+}
+
+Integer50 *loadHWConfigVariable(int doSeed){
+
+
+
+}
+
+
+
+
+
+
+
